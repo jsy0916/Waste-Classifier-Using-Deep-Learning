@@ -2,7 +2,7 @@
 AI Garbage Classification and Recycling Quiz Web App
 <div class="container">
     
-    <h1>🌿 AI 스마트 분리수거 대작전</h1>
+    <h1>🌿 올바른 쓰레기 분리수거방법 알아보기!</h1>
     <p>쓰레기를 카메라에 비추고 [시작하기] 버튼을 누르세요.</p>
 
     <div id="webcam-container"></div>
