@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌿 AI 스마트 분리수거 대작전</title>
+    <title>🌿 쓰레기 분리수거 도우미</title>
+    <title> 1724 이서빈 1729 정선율 1735 하예지</title>
+    <title> 공동체 문제해결을 위한 마이크로 실험 프로젝트 -제작 정선율</title>
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
@@ -73,10 +75,10 @@
     <div class="container">
         
         <div id="view-start" class="view active">
-            <h1>📥 사이트 접속 완료</h1>
+            <h1>쓰레기 분리수거 도우미</h1>
             <p>쓰레기 분석을 시작하시겠습니까?</p>
             <button onclick="startAnalysis()">네 (분석 시작)</button>
-            <button class="no-btn" onclick="switchView('view-ask-quiz')">아니오</button>
+            <button class="no-btn" onclick="switchView('view-ask-quiz')">아니오-퀴즈진행</button>
         </div>
 
         <div id="view-ask-quiz" class="view">
@@ -98,11 +100,11 @@
             <p id="result-text" style="font-size: 18px; font-weight: bold; color: #16a34a; margin: 20px 0;"></p>
             <hr style="border: 0; height: 1px; background: #e2e8f0; margin: 20px 0;">
             <p>프로젝트 발전을 위해 아래 설문조사에 참여해 주세요!</p>
-            <button class="survey-btn" onclick="goUrl('https://forms.google.com/...여기에_진짜_설문지_주소_넣기...')">📋 설문조사 참여하기</button>
+            <button class="survey-btn" onclick="goUrl('https://docs.google.com/forms/d/e/1FAIpQLSeI735AEzgPbzAFQivBziU1ymLAkPN2vbkiXcMMj7lxnpKR1A/viewform?usp=header')">📋 설문조사 참여하기</button>
         </div>
 
         <div id="view-quiz" class="view">
-            <h1>✏️ 분리배출 상식 퀴즈</h1>
+            <h1> 분리배출 상식 퀴즈</h1>
             <p id="quiz-question" style="font-size: 18px; font-weight: bold; margin: 20px 0;"></p>
             <button onclick="checkQuizAnswer(true)">O (그렇다)</button>
             <button class="no-btn" onclick="checkQuizAnswer(false)">X (아니다)</button>
@@ -116,28 +118,28 @@
     <script>
         // [2. 로직 - JavaScript]
         
-        // 제공해 준 티처블 머신 모델 주소 적용!
+        
         const URL = "https://teachablemachine.withgoogle.com/models/ZZgyOAi5u/"; 
         
         let model, webcam, maxPredictions;
         let currentQuizIndex = 0;
 
-        // 우리 조가 낼 퀴즈 문제 은행 리스트
+        // 퀴즈 더 추가
         const quizBank = [
             { q: "페트병은 라벨을 붙인 채로 압착해서 버려야 한다.", a: false, comment: "라벨은 꼭 떼서 비닐로 따로 버려야 해요!" },
             { q: "영수증(감열지)은 종이류로 분리배출이 가능하다.", a: false, comment: "영수증은 재활용이 안 되므로 일반쓰레기통에 버려야 해요!" },
-            { q: "캔류를 버릴 때는 담배꽁초 등 이물질을 넣지 않고 비워 버려야 한다.", a: true, comment: "맞아요! 내부를 깨끗이 비우고 배출해야 재활용이 잘 됩니다." }
+            { q: "영수증은 종이로 분리배출 할 수 있다.", a: false, comment: "영수증은 종이로 분리배출 할 수 없습니다! 일반쓰레기통에 버려야해요!" }
         ];
 
-        // 화면 전환 헬퍼 함수
+        
         function switchView(viewId) {
-            // 모든 화면 숨기기
+           
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            // 원하는 화면만 보여주기
+            
             document.getElementById(viewId).classList.add('active');
         }
 
-        // 새 창 열기 함수
+        
         function goUrl(url) {
             window.open(url, '_blank');
         }
@@ -189,7 +191,7 @@
             // 순서도의 쓰레기 종류별 조건문 (분리배출 매뉴얼 텍스트 매칭)
             let finalMessage = "";
             
-            // ⚠️ 주의: 티처블 머신에 적은 클래스 이름(영문/한글)과 완전히 똑같이 맞춰야 해!
+            
             if (bestClassName === "Plastic" || bestClassName === "플라스틱") {
                 finalMessage = "“이 쓰레기는 플라스틱입니다. 분리배출칸 중 플라스틱칸에 버려주세요”";
             } else if (bestClassName === "Can" || bestClassName === "캔") {
@@ -224,7 +226,7 @@
             if (userChoice === currentQuiz.a) {
                 alert("🎉 정답입니다!\n" + currentQuiz.comment);
             } else {
-                alert("😢 아쉽네요!\n" + currentQuiz.comment);
+                alert("😢 오답입니다!\n" + currentQuiz.comment);
             }
 
             currentQuizIndex++;
@@ -235,7 +237,7 @@
             } else {
                 alert("🏁 퀴즈를 모두 마쳤습니다! 설문조사 페이지로 이동합니다.");
                 // 순서도상 퀴즈 종료 후 -> 설문조사 흐름 반영
-                document.getElementById("result-text").innerText = "🏆 퀴즈를 완료하셨습니다! 대단해요!";
+                document.getElementById("result-text").innerText = "분리수거 퀴즈가 끝났습니다! 쓰레기분석도 진행해보세요!";
                 switchView('view-result');
             }
         }
