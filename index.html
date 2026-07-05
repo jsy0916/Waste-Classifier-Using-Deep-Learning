@@ -1,4 +1,3 @@
-https://teachablemachine.withgoogle.com/models/ZZgyOAi5u/
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -11,7 +10,7 @@ https://teachablemachine.withgoogle.com/models/ZZgyOAi5u/
         /* [1. 디자인 - CSS] */
         body {
             font-family: 'Nanum Gothic', sans-serif;
-            background-color: #f0fdf4; /* 연한 초록 배경 */
+            background-color: #f0fdf4;
             text-align: center;
             color: #166534;
             margin: 0;
@@ -20,147 +19,224 @@ https://teachablemachine.withgoogle.com/models/ZZgyOAi5u/
 
         .container {
             max-width: 500px;
-            margin: 0 auto;
+            margin: 40px auto;
             background: white;
-            padding: 20px;
+            padding: 30px;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
-        h1 { font-size: 24px; margin-bottom: 10px; }
-        p { font-size: 16px; color: #374151; }
+        h1 { font-size: 24px; margin-bottom: 20px; color: #15803d; }
+        p { font-size: 16px; color: #374151; line-height: 1.6; }
 
-        /* 카메라 화면 꾸미기 */
+        /* 화면 전환을 위한 클래스 (처음엔 다 숨겨둠) */
+        .view { display: none; }
+        /* 현재 활성화된 화면만 보여줌 */
+        .active { display: block; }
+
+        /* 버튼 기본 디자인 */
+        button {
+            background-color: #22c55e;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+            transition: 0.2s;
+        }
+        button:hover { background-color: #16a34a; transform: scale(1.03); }
+        
+        /* 거절/아니오 버튼 디자인 */
+        .no-btn { background-color: #ef4444; }
+        .no-btn:hover { background-color: #dc2626; }
+
+        /* 카메라 상자 */
         #webcam-container {
             margin: 20px auto;
             border: 5px solid #22c55e;
             border-radius: 15px;
             overflow: hidden;
-            width: 200px; /* 티처블 머신 기본 사이즈 */
+            width: 200px;
             height: 200px;
         }
 
-        /* 버튼 꾸미기 */
-        button {
-            background-color: #22c55e;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            margin: 10px;
-            transition: 0.3s;
-        }
-        button:hover { background-color: #16a34a; transform: scale(1.05); }
-
-        /* 결과 창 꾸미기 */
-        #label-container {
-            font-size: 20px;
-            font-weight: bold;
-            margin: 20px 0;
-            padding: 10px;
-            background: #f8fafc;
-            border-radius: 10px;
-        }
-
-        /* 설문 버튼 스타일 */
-        .survey-btn { background-color: #f59e0b; }
-        .survey-btn:hover { background-color: #d97706; }
+        /* 설문조사 버튼 */
+        .survey-btn { background-color: #eab308; color: #1e293b; font-size: 18px; padding: 15px 35px; }
+        .survey-btn:hover { background-color: #ca8a04; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🌿 AI 분리수거 판별기</h1>
-        <p>쓰레기를 카메라에 비추고 아래 버튼을 눌러주세요!</p>
-
-        <div id="webcam-container"></div>
         
-        <div id="label-container">분석 대기 중...</div>
+        <div id="view-start" class="view active">
+            <h1>📥 사이트 접속 완료</h1>
+            <p>쓰레기 분석을 시작하시겠습니까?</p>
+            <button onclick="startAnalysis()">네 (분석 시작)</button>
+            <button class="no-btn" onclick="switchView('view-ask-quiz')">아니오</button>
+        </div>
 
-        <button type="button" onclick="init()">시작하기</button>
-        <br>
-        <button class="survey-btn" onclick="window.open('여기에_구글_설문지_주소를_넣으세요', '_blank')">
-            📋 프로젝트 피드백 남기기
-        </button>
+        <div id="view-ask-quiz" class="view">
+            <h1>❓ 질문</h1>
+            <p>퀴즈를 시작하시겠습니까?</p>
+            <button onclick="startQuiz()">네 (퀴즈 시작)</button>
+            <button class="no-btn" onclick="switchView('view-start')">아니오 (처음으로)</button>
+        </div>
+
+        <div id="view-camera" class="view">
+            <h1>📷 카메라 스캔</h1>
+            <p>카메라에 쓰레기를 잘 보여주세요!</p>
+            <div id="webcam-container"></div>
+            <button onclick="analyzeTrash()">✨ 쓰레기 분석하기</button>
+        </div>
+
+        <div id="view-result" class="view">
+            <h1>📊 분석 결과</h1>
+            <p id="result-text" style="font-size: 18px; font-weight: bold; color: #16a34a; margin: 20px 0;"></p>
+            <hr style="border: 0; height: 1px; background: #e2e8f0; margin: 20px 0;">
+            <p>프로젝트 발전을 위해 아래 설문조사에 참여해 주세요!</p>
+            <button class="survey-btn" onclick="goUrl('https://forms.google.com/...여기에_진짜_설문지_주소_넣기...')">📋 설문조사 참여하기</button>
+        </div>
+
+        <div id="view-quiz" class="view">
+            <h1>✏️ 분리배출 상식 퀴즈</h1>
+            <p id="quiz-question" style="font-size: 18px; font-weight: bold; margin: 20px 0;"></p>
+            <button onclick="checkQuizAnswer(true)">O (그렇다)</button>
+            <button class="no-btn" onclick="checkQuizAnswer(false)">X (아니다)</button>
+        </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 
-    <script type="text/javascript">
-        // [3. 로직 - JavaScript]
+    <script>
+        // [2. 로직 - JavaScript]
+        
+        // 제공해 준 티처블 머신 모델 주소 적용!
+        const URL = "https://teachablemachine.withgoogle.com/models/ZZgyOAi5u/"; 
+        
+        let model, webcam, maxPredictions;
+        let currentQuizIndex = 0;
 
-        // ⚠️ 아래 큰따옴표 안에 본인의 티처블 머신 주소를 꼭 넣어주세요!
-        const URL = "여기에_티처블_머신_주소를_넣으세요"; 
+        // 우리 조가 낼 퀴즈 문제 은행 리스트
+        const quizBank = [
+            { q: "페트병은 라벨을 붙인 채로 압착해서 버려야 한다.", a: false, comment: "라벨은 꼭 떼서 비닐로 따로 버려야 해요!" },
+            { q: "영수증(감열지)은 종이류로 분리배출이 가능하다.", a: false, comment: "영수증은 재활용이 안 되므로 일반쓰레기통에 버려야 해요!" },
+            { q: "캔류를 버릴 때는 담배꽁초 등 이물질을 넣지 않고 비워 버려야 한다.", a: true, comment: "맞아요! 내부를 깨끗이 비우고 배출해야 재활용이 잘 됩니다." }
+        ];
 
-        let model, webcam, labelContainer, maxPredictions;
-        let isQuizRunning = false; // 퀴즈가 중복으로 뜨지 않게 방지
+        // 화면 전환 헬퍼 함수
+        function switchView(viewId) {
+            // 모든 화면 숨기기
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            // 원하는 화면만 보여주기
+            document.getElementById(viewId).classList.add('active');
+        }
 
-        async function init() {
-            const modelURL = URL + "model.json";
-            const metadataURL = URL + "metadata.json";
+        // 새 창 열기 함수
+        function goUrl(url) {
+            window.open(url, '_blank');
+        }
 
-            // 모델 로드
-            model = await tmImage.load(modelURL, metadataURL);
-            maxPredictions = model.getTotalClasses();
+        // [분석 시작 버튼 클릭 시] -> 카메라 작동 및 화면 이동
+        async function startAnalysis() {
+            switchView('view-camera');
+            if (!webcam) {
+                const modelURL = URL + "model.json";
+                const metadataURL = URL + "metadata.json";
+                model = await tmImage.load(modelURL, metadataURL);
+                maxPredictions = model.getTotalClasses();
 
-            // 카메라 설정
-            const flip = true; 
-            webcam = new tmImage.Webcam(200, 200, flip); 
-            await webcam.setup(); 
-            await webcam.play();
-            window.requestAnimationFrame(loop);
-
-            // 화면에 카메라 추가
-            document.getElementById("webcam-container").appendChild(webcam.canvas);
-            labelContainer = document.getElementById("label-container");
+                webcam = new tmImage.Webcam(200, 200, true); 
+                await webcam.setup(); 
+                await webcam.play();
+                document.getElementById("webcam-container").appendChild(webcam.canvas);
+                window.requestAnimationFrame(loop);
+            }
         }
 
         async function loop() {
-            webcam.update(); 
-            await predict();
+            webcam.update();
             window.requestAnimationFrame(loop);
         }
 
-        async function predict() {
+        // [쓰레기 분석하기 버튼 클릭 시] -> 순서도 로직 핵심 처리
+        async function analyzeTrash() {
             const prediction = await model.predict(webcam.canvas);
             
-            // 실시간 결과 표시
-            let bestPrediction = "";
             let highestProb = 0;
             let bestClassName = "";
 
+            // 가장 확률이 높은 클래스 찾기
             for (let i = 0; i < maxPredictions; i++) {
-                if(prediction[i].probability > highestProb) {
+                if (prediction[i].probability > highestProb) {
                     highestProb = prediction[i].probability;
                     bestClassName = prediction[i].className;
                 }
             }
 
-            labelContainer.innerHTML = bestClassName + " (확률: " + (highestProb * 100).toFixed(0) + "%)";
+            // 순서도의 "쓰레기가 인식되었는가? -> 아니오 -> 다시 인식해주세요" 구현
+            // 확률이 80%(0.80) 미만이거나 인식이 애매하면 다시 하라고 안내
+            if (highestProb < 0.80) {
+                alert("❌ 다시 인식해주세요. (쓰레기를 카메라 가까이 정중앙에 위치시켜 주세요)");
+                return; // 함수를 여기서 종료하여 다음 단계로 안 넘어감
+            }
 
-            // [퀴즈 로직] 확률이 90% 이상이고 퀴즈가 진행 중이 아닐 때만 실행
-            if (highestProb > 0.90 && !isQuizRunning) {
-                isQuizRunning = true; // 퀴즈 실행 중으로 표시
-                
-                if (bestClassName === "Plastic") { // 'Plastic'은 티처블 머신에서 정한 이름으로 수정!
-                    alert("📢 AI 분석: 플라스틱입니다! \n방법: 내용물을 비우고 라벨을 떼서 배출하세요.");
-                    let q = confirm("❓ 퀴즈: 플라스틱 페트병은 발로 밟아서 압착해야 할까요?");
-                    if(q) alert("🎉 정답! 부피를 줄이는 것이 중요해요.");
-                    else alert("😢 오답! 부피를 줄여서 버려야 한답니다.");
-                } 
-                else if (bestClassName === "Paper") {
-                    alert("📢 AI 분석: 종이입니다! \n방법: 테이프나 택배 송장을 제거하고 배출하세요.");
-                    let q = confirm("❓ 퀴즈: 영수증은 종이류로 분리수거가 될까요?");
-                    if(!q) alert("🎉 정답! 영수증은 재활용이 안 되는 일반쓰레기에요.");
-                    else alert("😢 오답! 영수증은 감열지라 재활용이 안 돼요.");
-                }
+            // 순서도의 쓰레기 종류별 조건문 (분리배출 매뉴얼 텍스트 매칭)
+            let finalMessage = "";
+            
+            // ⚠️ 주의: 티처블 머신에 적은 클래스 이름(영문/한글)과 완전히 똑같이 맞춰야 해!
+            if (bestClassName === "Plastic" || bestClassName === "플라스틱") {
+                finalMessage = "“이 쓰레기는 플라스틱입니다. 분리배출칸 중 플라스틱칸에 버려주세요”";
+            } else if (bestClassName === "Can" || bestClassName === "캔") {
+                finalMessage = "“이 쓰레기는 캔입니다. 분리배출칸 중 캔칸에 버려주세요”";
+            } else if (bestClassName === "Paper" || bestClassName === "종이") {
+                finalMessage = "“이 쓰레기는 종이입니다. 분리배출칸 중 종이칸에 버려주세요”";
+            } else {
+                // 일반쓰레기 등 나머지 경우
+                finalMessage = "“이 쓰레기는 일반쓰레기입니다. 분리배출칸 중 일반쓰레기칸에 버려주세요”";
+            }
 
-                // 퀴즈 종료 후 3초 뒤에 다시 인식 시작 (연속 팝업 방지)
-                setTimeout(() => { isQuizRunning = false; }, 3000);
+            // 결과 화면에 텍스트 주입하고 화면 전환 -> 설문조사로 유도
+            document.getElementById("result-text").innerText = finalMessage;
+            switchView('view-result');
+        }
+
+        // [퀴즈 시작 버튼 클릭 시]
+        function startQuiz() {
+            currentQuizIndex = 0;
+            switchView('view-quiz');
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            document.getElementById("quiz-question").innerText = `Q${currentQuizIndex + 1}. ${quizBank[currentQuizIndex].q}`;
+        }
+
+        // O, X 버튼 클릭 처리
+        function checkQuizAnswer(userChoice) {
+            const currentQuiz = quizBank[currentQuizIndex];
+            
+            if (userChoice === currentQuiz.a) {
+                alert("🎉 정답입니다!\n" + currentQuiz.comment);
+            } else {
+                alert("😢 아쉽네요!\n" + currentQuiz.comment);
+            }
+
+            currentQuizIndex++;
+
+            // 문제가 더 남아있으면 다음 문제로, 다 풀었으면 결과(설문조사) 화면으로 이동!
+            if (currentQuizIndex < quizBank.length) {
+                showQuizQuestion();
+            } else {
+                alert("🏁 퀴즈를 모두 마쳤습니다! 설문조사 페이지로 이동합니다.");
+                // 순서도상 퀴즈 종료 후 -> 설문조사 흐름 반영
+                document.getElementById("result-text").innerText = "🏆 퀴즈를 완료하셨습니다! 대단해요!";
+                switchView('view-result');
             }
         }
     </script>
