@@ -10,6 +10,6 @@ AI Garbage Classification and Recycling Quiz Web App
     <div id="label-container">분석 진행 중...</div>
 
     <button type="button" onclick="init()">시작하기</button>
-    <button class="survey-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSepjFExU2MOCWJ7XDxHDc_AsA-W_p6vMfHhR3dPjgTAoSzX8w/viewform?usp=header', '_blank')">📋 피드백 남기기</button>
+    <button class="survey-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSepjFExU2MOCWJ7XDxHDc_AsA-W_p6vMfHhR3dPjgTAoSzX8w/viewform?usp=header', '_blank')">📋 설문지 작성(상품제공)</button>
     
 </div>
