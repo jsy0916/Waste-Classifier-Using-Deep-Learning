@@ -216,6 +216,8 @@
                 finalMessage = "“이 쓰레기는 캔입니다. 분리배출칸 중 캔칸에 버려주세요”";
             } else if (bestClassName === "Paper" || bestClassName === "종이") {
                 finalMessage = "“이 쓰레기는 종이입니다. 분리배출칸 중 종이칸에 버려주세요”";
+            } else if (bestClassName === "not trash" || bestClassName === "쓰레기가 아님") {
+                finalMessage = "“쓰레기가 아닙니다. 쓰레기만 인식해주세요.”";
             } else {
                 // 일반쓰레기 등 나머지 경우
                 finalMessage = "“이 쓰레기는 일반쓰레기입니다. 분리배출칸 중 일반쓰레기칸에 버려주세요”";
