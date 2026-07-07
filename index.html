@@ -93,7 +93,7 @@
             <h1>쓰레기 분리수거 도우미</h1>
             <p>쓰레기 분석을 시작하시겠습니까?</p>
             <button onclick="startAnalysis()">네 (분석 시작)</button>
-            <button class="no-btn" onclick="switchView('view-ask-quiz')">아니오-퀴즈진행</button>
+            <button class="no-btn" onclick="switchView('view-ask-quiz')">아니오 (퀴즈진행)</button>
         </div>
 
         <div id="view-ask-quiz" class="view">
@@ -107,7 +107,7 @@
             <h1>📷 카메라 스캔</h1>
             <p>카메라에 쓰레기를 잘 보여주세요!</p>
             <div id="webcam-container"></div>
-            <button onclick="analyzeTrash()">✨ 쓰레기 분석하기</button>
+            <button onclick="analyzeTrash()">쓰레기 분석하기</button>
         </div>
 
         <div id="view-result" class="view">
@@ -197,7 +197,7 @@
             }
 
             
-            // 확률이 80%(0.80) 미만이거나 인식이 애매하면 다시 하라고 안내
+            // 확률이 80% 미만이거나 인식이 애매하면 다시 하라고 안내
             if (highestProb < 0.80) {
                 alert("❌ 다시 인식해주세요. (쓰레기를 카메라 가까이 정중앙에 위치시켜 주세요)");
                 return; 
@@ -250,7 +250,7 @@
             if (currentQuizIndex < quizBank.length) {
                 showQuizQuestion();
             } else {
-                alert("🏁 퀴즈를 모두 마쳤습니다! 설문조사 페이지로 이동합니다.");
+                alert("퀴즈를 모두 마쳤습니다! 설문조사 페이지로 이동합니다.");
                 document.getElementById("result-text").innerText = "분리수거 퀴즈가 끝났습니다! 쓰레기분석도 진행해보세요!";
                 switchView('view-result');
             }
