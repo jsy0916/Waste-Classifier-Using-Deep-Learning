@@ -249,12 +249,11 @@
 
             currentQuizIndex++;
 
-            // 문제가 더 남아있으면 다음 문제로, 다 풀었으면 결과(설문조사) 화면으로 이동!
+            
             if (currentQuizIndex < quizBank.length) {
                 showQuizQuestion();
             } else {
                 alert("🏁 퀴즈를 모두 마쳤습니다! 설문조사 페이지로 이동합니다.");
-                // 순서도상 퀴즈 종료 후 -> 설문조사 흐름 반영
                 document.getElementById("result-text").innerText = "분리수거 퀴즈가 끝났습니다! 쓰레기분석도 진행해보세요!";
                 switchView('view-result');
             }
